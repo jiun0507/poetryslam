@@ -3,7 +3,6 @@ from random import randint, randrange
 import pyrhyme
 
 
-
 class RandomWordGenerator:
     def __init__(self):
         self.nouns = {}
@@ -102,13 +101,33 @@ class RandomSentenceGenerator:
         return first_line + "\n" + second_line
 
 
+class Evaluator:
+    def __init__(self):
+        self.alphabets = []
+
+    def evaluate(self, poem):
+        words = poem.split()
+        result = 0
+        for word in words:
+            self.alphabets.append(word[0])
+        result += len(list(set(self.alphabets)))
+        return result
+
 sentence_generator = RandomSentenceGenerator()
+evaluator = Evaluator()
 
 poem = ""
-for i in range(1, 4):
+for i in range(1, 5):
     sentence = sentence_generator.generate_sentence()
-    poem += sentence + "\n"
+    poem += sentence + "\n\n"
+
+result = str(evaluator.evaluate(poem))
+title = sentence_generator.word_generator.generate_word("Noun")
+print(f"\nTitle: {title} \n\n")
+print(poem)
+print("The score is ", result)
 
 import os
 
 os.system(f"say -v Alex '{poem}'")
+os.system(f"say -v Alex 'The score is {result}'")
