@@ -1,9 +1,21 @@
+"""
+Jiun Kim
+M6 Poetry Slam
+
+This is Poetry Maker Punchline King made by Jiun Kim.
+The libraries used are pyrhyme which makes rhyme words and word files from the internet.
+"""
+
 from random import randint, randrange
 
 import pyrhyme
 
 
 class RandomWordGenerator:
+    """
+    This class makes random noun, verb, adjective, adverb and subject.
+    It also creates rhyme given a word.
+    """
     def __init__(self):
         self.nouns = {}
         self.verbs = {}
@@ -13,6 +25,8 @@ class RandomWordGenerator:
         self.rhymer = pyrhyme.RhymeBrain()
 
         for i in range(1, 5):
+            # Loops through the files to store all the words from the 
+            # prepared word files.
             f = open(f"adjectives/{i}syllableadjectives.txt", "r")
             self.adjectives[i] = f.read().split()
             f.close()
@@ -30,19 +44,20 @@ class RandomWordGenerator:
             f.close()
 
     def make_rhyme(self, word):
-
+        """
+        Uses rhyming library to pick the first(best) rhyme for a given word.
+        """
         rhymes = [x.word for x in self.rhymer.rhyming(word, lang='en')]
         if len(rhymes) == 0:
+            # Edge Case: There might be no rhymes. Then just return the original word.
             return word
         else:
             return rhymes[0]
 
-    def print_sample(self):
-
-        for i in range(1, 5):
-            print(self.adjectives[i][:10], self.adverbs[i][:10], self.nouns[i][:10], self.verbs[i][:10])
-
     def generate_word(self, word):
+        """
+        Generate random word given the type of the word.
+        """
         if word == "Noun":
             return self.random_noun()
         elif word == "Adjective":
@@ -55,6 +70,9 @@ class RandomWordGenerator:
             result = self.random_subject()
             return result
 
+    """
+    Random word generating functions.
+    """
 
     def random_subject(self):
         return self.subjects[randint(0, 5)]
@@ -76,8 +94,12 @@ class RandomWordGenerator:
         return self.nouns[syllable][randrange(0, len(self.nouns[syllable])-1)]
 
 class RandomSentenceGenerator:
+    """
+    Uses random word generator in order to create random sentences.
+    """
     def __init__(self):
         self.word_generator = RandomWordGenerator()
+        #Basic sentence structures to provide structure to the poem.
         self.sentence_structures = {
             0: ["Subject", "Verb"],
             1: ["Subject", "Verb", "Noun"],
@@ -87,10 +109,14 @@ class RandomSentenceGenerator:
         }
 
     def generate_sentence(self):
+        """
+        Create a pair of sentences. Second sentence has a word that
+        rhymes with the word in the first sentence.
+        """
         sentence_structure = self.sentence_structures[randint(0, 4)]
         first_line = ""
         second_line = ""
-        rhyme_index = randint(0, len(sentence_structure)-1)
+        rhyme_index = randint(0, len(sentence_structure)-1) # arbitrarily pick an index that will rhyme.
         for index, word in enumerate(sentence_structure):
             new_word = self.word_generator.generate_word(word)
             new_word2 = self.word_generator.generate_word(word)
@@ -102,10 +128,19 @@ class RandomSentenceGenerator:
 
 
 class Evaluator:
+    """
+    Evalate a poem.
+    """
     def __init__(self):
         self.alphabets = []
 
     def evaluate(self, poem):
+        """
+        Check the diversity of the words used in the poem.
+        The first letter of the words in the poem should be diverse and
+        the number of different first letter used will be the score of the
+        poem.
+        """
         words = poem.split()
         result = 0
         for word in words:
